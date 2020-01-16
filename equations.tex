@@ -1,17 +1,52 @@
 \documentclass{article}
-
+\usepackage[margin=.5in]{geometry}
 \usepackage{amsmath}
 \usepackage{mathtools}
+\usepackage{tabularx}
+
+% https://tex.stackexchange.com/questions/89166/centering-in-tabularx-and-x-columns/89168
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
 
 \begin{document}
+
 
 Poisson-normal
 
 \begin{align*}
-\eta & = \log{\mu} + u + e \\
-\lambda & = \exp{\eta} \\
-\left.y \middle| \lambda\right. & = Poisson\left(\lambda\right)
+\eta_{ij} & = \log{\mu_{ij}} + b_j + e_{ij} \\
+b_j & \sim N\left(0, \tau^2\right) \\
+e_{ij} & \sim N\left(0, \sigma^2\right) \\
+\eta_{ij} & = \log{\lambda_{ij}} \\
+\lambda_{ij} & = \exp{\eta_{ij}} \\
+\left.y_{ij} \middle| b_j\right. & \sim \text{Poisson}\left(\lambda_{ij}\right)
 \end{align*}
+
+\begin{align*}
+\text{E}\left(\left.y_{ij} \middle| b_j\right.\right) = \lambda_{ij} \\
+\text{Var}\left(\left.y_{ij} \middle| b_j\right.\right) = \lambda_{ij}
+\end{align*}
+
+
+
+Poisson-gamma
+\begin{align*}
+\eta_{ij} & = \log{\mu_{ij}} + b_j \\
+b_j & \sim N\left(0, \tau^2\right) \\
+u_{ij} & \sim \Gamma\left(\phi^{-1}, \text{rate}=\phi\right) \\
+\eta_{ij} & = \log{\left(\lambda_{ij} u_{ij} \right)} = \log{\lambda_{ij}} + \log{u_{ij}} \\
+\lambda_{ij} u_{ij} & = \exp{\eta_{ij}} \\
+\left.y_{ij} \middle| b_j, u_{ij}\right. & \sim \text{Poisson}\left(\lambda_{ij} u_{ij}\right) \\
+\left.y_{ij} \middle| b_j \right. & \sim \text{Negative Binomial}\left(\lambda_{ij}, \phi\right)
+\end{align*}
+
+\begin{align*}
+\text{E}\left(\left.y_{ij} \middle| b_j\right.\right) = \lambda_{ij} \left(\frac{1-\phi}{\phi}\right) \\
+\text{Var}\left(\left.y_{ij} \middle| b_j\right.\right) = \lambda_{ij} \left(\frac{1-\phi}{\phi^2}\right)
+\end{align*}
+
+
+
+
 
 
 
