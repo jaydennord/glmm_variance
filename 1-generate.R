@@ -38,7 +38,7 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
   trt  <- rep_len(seq_len(neu), n)
   mu <- mu[trt]
   
-  u <- rnorm(n = nblk, sd = blk_sd)[blk]
+  b <- rnorm(n = nblk, sd = blk_sd)[blk]
   
   y <- switch(
     
@@ -46,13 +46,13 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
     
     pois_normal = {
       e <- rnorm(n, sd = eu_sd)
-      eta <- log(mu) + u + e
+      eta <- log(mu) + b + e
       lambda <- exp(eta)
       rpois(n, lambda)
     },
     
     pois_gamma = {
-      eta <- log(mu) + u
+      eta <- log(mu) + b
       lambda <- exp(eta)
       rnbinom(n, lambda, phi)
     }
@@ -61,7 +61,7 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
   
   # return
   data.frame(
-    id = id,
+    id  = id,
     blk = factor(blk),
     trt = factor(trt),
     y   = y,
@@ -92,7 +92,8 @@ dsn_common <- crossing(
 dsn_methods <- list(
   
   pois_gamma = crossing(
-    phi = c(.1, .2)
+    # phi = c(.1, .2)
+    phi = NULL
   ),
   
   pois_normal = crossing(

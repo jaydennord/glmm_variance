@@ -10,7 +10,7 @@
 \begin{document}
 
 
-Poisson-normal
+\section{Poisson-normal}
 
 \begin{align*}
 \eta_{ij} & = \log{\mu_{ij}} + b_j + e_{ij} \\
@@ -22,13 +22,38 @@ e_{ij} & \sim N\left(0, \sigma^2\right) \\
 \end{align*}
 
 \begin{align*}
-\text{E}\left(\left.y_{ij} \middle| b_j\right.\right) = \lambda_{ij} \\
-\text{Var}\left(\left.y_{ij} \middle| b_j\right.\right) = \lambda_{ij}
+\text{E}\left(y_{ij} \middle| b_j\right) = \lambda_{ij} \\
+\text{Var}\left(y_{ij} \middle| b_j\right) = \lambda_{ij}
 \end{align*}
 
+\begin{align*}
+\text{E}\left(\lambda\right) & = \exp{\left(\log{\mu}+\left(\tau^2+\sigma^2\right) / 2\right)} \\
+\text{Var}\left(\lambda\right) & = \exp{\left(2 \log{\mu} + 2\tau^2 + 2\sigma^2\right)} - \exp{\left(2\log{\mu} + \tau^2 +\sigma^2 \right)}
+\end{align*}
 
+\begin{align*}
+\text{E}\left(y\right) & = \text{E}\left(\lambda\right) \\
+& = \exp{\left(\log{\mu}+\left(\tau^2 + \sigma^2\right) / 2\right)} \\
+& = \mu \exp{\left(\tau^2 / 2\right)} \exp{\left(\sigma^2 / 2\right)}
+\end{align*}
 
-Poisson-gamma
+\begin{align*}
+\text{Var}\left(y\right) & = \text{Var}\left(\text{E}\left(y_{ij} \middle| b_j\right)\right) +
+  \text{E}\left(\text{Var}\left(y_{ij} \middle| b_j\right)\right) \\
+& = \text{Var}\left(\lambda\right) +
+  \text{E}\left(\lambda\right) \\
+& = \exp{\left(\log{\mu}+\left(\tau^2+\sigma^2\right) / 2\right)} +
+  \exp{\left(2 \log{\mu} + 2\tau^2+2\sigma^2 \right)} -
+  \exp{\left(2\log{\mu} + \tau^2+\sigma^2\right)} \\
+& = \mu \exp\left(\tau^2 / 2\right) \exp\left(\sigma^2 / 2\right) +
+  \mu^2 \left(\exp\left(2\tau^2 + 2\sigma^2\right) - \exp{\left(\tau^2 + \sigma^2\right)} \right) \\
+& = \mu^2 \left(\exp\left(2\tau^2 + 2\sigma^2\right) - \exp{\left(\tau^2 + \sigma^2\right)} \right) +
+  \mu \exp\left(\tau^2 / 2\right) \exp\left(\sigma^2 / 2\right)
+\end{align*}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Poisson-gamma}
 \begin{align*}
 \eta_{ij} & = \log{\mu_{ij}} + b_j \\
 b_j & \sim N\left(0, \tau^2\right) \\
@@ -40,14 +65,45 @@ u_{ij} & \sim \Gamma\left(\phi^{-1}, \text{rate}=\phi\right) \\
 \end{align*}
 
 \begin{align*}
-\text{E}\left(\left.y_{ij} \middle| b_j\right.\right) = \lambda_{ij} \left(\frac{1-\phi}{\phi}\right) \\
-\text{Var}\left(\left.y_{ij} \middle| b_j\right.\right) = \lambda_{ij} \left(\frac{1-\phi}{\phi^2}\right)
+\text{E}\left(y_{ij} \middle| b_j\right) = \lambda_{ij} \left(\frac{1-\phi}{\phi}\right) \\
+\text{Var}\left(y_{ij} \middle| b_j\right) = \lambda_{ij} \left(\frac{1-\phi}{\phi^2}\right)
 \end{align*}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+\begin{align*}
+\text{E}\left(\lambda\right) & = \exp{\left(\log{\mu}+\tau^2 / 2\right)} \\
+\text{Var}\left(\lambda\right) & = \exp{\left(2 \log{\mu} + 2\tau^2 \right)} - \exp{\left(2\log{\mu} + \tau^2 \right)}
+\end{align*}
 
 
+\begin{align*}
+\text{E}\left(y\right) & = \text{E}\left(\lambda_{ij} \left(\frac{1-\phi}{\phi}\right)\right) \\
+& = \text{E}\left(\lambda_{ij} \right) \left(\frac{1-\phi}{\phi}\right) \\
+& = \exp{\left(\log{\mu}+\tau^2 / 2\right)} \left(\frac{1-\phi}{\phi}\right) \\
+& = \mu \exp{\left(\tau^2 / 2\right)} \left(\frac{1-\phi}{\phi}\right)
+\end{align*}
+
+
+\begin{align*}
+\text{Var}\left(y\right) & = \text{Var}\left(\text{E}\left(y_{ij} \middle| b_j\right)\right) +
+  \text{E}\left(\text{Var}\left(y_{ij} \middle| b_j\right)\right) \\
+& = \text{Var}\left(\lambda\left(\frac{1-\phi}{\phi}\right)\right) +
+  \text{E}\left(\lambda\left(\frac{1-\phi}{\phi^2}\right)\right) \\
+& = \text{Var}\left(\lambda\right)\left(\frac{1-\phi}{\phi}\right) +
+  \text{E}\left(\lambda\right)  \left(\frac{1-\phi}{\phi^2}\right)^2 \\
+& = \left(\exp{\left(2 \log{\mu} + 2\tau^2 \right)} - \exp{\left(2\log{\mu} + \tau^2 \right)}\right)\left(\frac{1-\phi}{\phi}\right) +
+    \left(\exp{\left(\log{\mu}+\tau^2 / 2\right)}\right)\left(\frac{1-\phi}{\phi^2}\right)^2 \\
+& = \mu^2 \left(\exp{2\tau^2}-\exp{\tau^2}\right)\left(\frac{1-\phi}{\phi}\right) +
+  \mu \exp{\left(\tau^2 / 2\right)}  \left(\frac{1-\phi}{\phi^2}\right)^2
+\end{align*}
+
+\begin{align*}
+\text{Var}\left(y\right) & =
+ \mu^2 \left(\exp\left(2\tau^2 + 2\sigma^2\right) - \exp{\left(\tau^2 + \sigma^2\right)} \right) +
+  \mu \exp\left(\tau^2 / 2\right) \exp\left(\sigma^2 / 2\right)
+\end{align*}
 
 \end{document}
