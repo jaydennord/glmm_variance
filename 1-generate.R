@@ -102,7 +102,9 @@ dsn <- dsn_common %>% crossing(
 ) %>%
   mutate(
     eu_sd = sqrt(1 - blk_sd^2),
-    phi = 1 / (exp(eu_sd^2 / 2) + 1)
+    phi = 1 / (exp(eu_sd^2 / 2) + 1),
+    id = stri_rand_strings(n(), length = 10),
+    sim_block = sample(0:749, size = n(), replace = TRUE)
   )
 
 
