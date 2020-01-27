@@ -5,16 +5,6 @@ index <- commandArgs(trailingOnly=TRUE)
 
 # packages ----------------------------------------------------------------
 
-# pkgs <- c(
-#   "data.table",
-#   "tidyverse",
-#   "rstanarm",
-#   "lme4"
-# )
-# for (pkg in pkgs) library(pkg, character.only = TRUE)
-
-#checkpoint()
-
 checkpoint::checkpoint("2019-11-01", scanForPackages = FALSE, checkpointLocation = ".")
 
 library(data.table)
@@ -24,9 +14,10 @@ library(lme4)
 
 devtools::session_info()
 
+
 # custom functions --------------------------------------------------------
 
-robust_template <- function(formula, data, ...) {
+robust_template <- 'function(formula, data, ...) {
   
   e <- w <- NA_character_
   res <- matrix(NA_real_, 1, 2)
@@ -34,7 +25,7 @@ robust_template <- function(formula, data, ...) {
   tryCatch(
     
     withCallingHandlers(
-      res <- my_conf(fun(formula, data, ...)),
+      res <- my_conf(<FUN>(formula, data, ...)),
       warning = function(w) {
         w <<- conditionMessage(w)
         invokeRestart("muffleWarning")
@@ -48,19 +39,7 @@ robust_template <- function(formula, data, ...) {
   )
   
   colnames(res) <- c("c025", "c975")
-  # if (!is.na(res)) {
-  #   res <- my_conf(res)
-  # }
-  
-  
-  
-  # list(
-  #   result = res,
-  #   warning = w,
-  #   error = e
-  #   
-  # )
-  
+
   cbind(
     as_tibble(res),
     warning = w,
@@ -68,7 +47,7 @@ robust_template <- function(formula, data, ...) {
     stringsAsFactors = FALSE
   )
   
-}
+}'
 
 funs <- c(
   "stan_glmer",
@@ -78,8 +57,9 @@ funs <- c(
 )
 
 for (f in funs) {
-  new_f <- robust_template
-  body(new_f)[[4]][[2]][[2]][[3]][[2]][[1]] <- substitute(fun, list(fun = as.name(f)))
+  new_f <- str_replace_all(robust_template, "<FUN>", f) %>%
+    str2expression() %>% 
+    eval()
   assign(paste0("r_", f), new_f)
 }
 
@@ -103,9 +83,7 @@ ana_data <- function(data, ...) {
     freq_fit_nb     = r_glmer.nb(y ~ 0 + trt + (1 | blk), data = data)
     
   )
-  
-  # map(fits, ~ my_conf(.$result))
-  # purrr::transpose(fits)
+
   bind_rows(fits, .id = "ana_method")
   
 }

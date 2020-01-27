@@ -3,15 +3,7 @@
 nrep <- commandArgs(trailingOnly=TRUE) # 1000
 
 
-
-
 # packages ----------------------------------------------------------------
-
-# pkgs <- c(
-#   "data.table",
-#   "tidyverse"
-# )
-# for (pkg in pkgs) library(pkg, character.only = TRUE)
 
 checkpoint::checkpoint("2019-11-01", scanForPackages = FALSE, checkpointLocation = ".")
 
@@ -20,6 +12,7 @@ library(tidyverse)
 library(stringi)
 
 devtools::session_info()
+
 
 # functions ---------------------------------------------------------------
 
@@ -59,14 +52,13 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
     
   )
   
-  # return
-  data.frame(
+  return(data.frame(
     id  = id,
     blk = factor(blk),
     trt = factor(trt),
     y   = y,
     stringsAsFactors = FALSE
-  )
+  ))
   
   
 }
@@ -75,7 +67,7 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
 
 # SAS glimmix defaults CIs are possible
 # write-up of some kind
-# can compare generation conditions
+# can't compare generation conditions
 
 dsn_common <- crossing(
   nblk = c(4, 20),
