@@ -78,15 +78,15 @@ dsn_common <- crossing(
 )
 
 # dsn_methods <- list(
-# 
+#
 #   pois_gamma = crossing(
 #     phi = c(.1, .2)
 #   ),
-# 
+#
 #   pois_normal = crossing(
 #     eu_sd = .5
 #   )
-# 
+#
 # ) %>% bind_rows(.id = "gen_method")
 
 
@@ -121,3 +121,5 @@ dsn %>%
     d <- pmap_dfr(.x, gen_data)
     fwrite(d, file = paste0("data/data_", .y, ".csv"), sep = ",")
   })
+
+fwrite(dsn, "dsn.csv", sep = ",")
