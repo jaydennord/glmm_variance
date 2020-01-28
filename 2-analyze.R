@@ -89,8 +89,6 @@ ana_data <- function(data, ...) {
 }
 
 
-
-
 # analyses ----------------------------------------------------------------
 
 dgroup <- fread(
@@ -100,7 +98,14 @@ dgroup <- fread(
   colClasses = c("character", "factor", "factor", "numeric")
 )
 
-dres <- dgroup %>% group_by(id) %>%
-  group_map(ana_data)
+dres <- dgroup %>% 
+  group_by(id) %>%
+  nest() %>%
+  mutate(
+    res = map(data, ana_data),
+    data = NULL
+  ) %>%
+  unnest(res)
+
 
 fwrite(dres, paste0("res/res_", index, ".csv"), sep = ",")
