@@ -1,11 +1,7 @@
-*sas.exe -sysin C:\Users\meaneych\Desktop\BATCH_SAS_test\batch_sas_test.sas -sysparm '5 7 123456789';
-
-*%LET dir = C:\Users\s-jnord2\Box\gdrive\stat_project\;
-*%LET dir = /tmp/;
 
 %LET index = %SCAN(&SYSPARM, 1);
 
-DATA d; 
+DATA d;
 INFILE "data/data_&index..csv" DELIMITER = "," FIRSTOBS=2;
 INPUT id $ blk trt y;
 RUN;
@@ -41,7 +37,7 @@ DBMS = CSV
 OUTFILE = "res/wald_normal_&index..csv"
 REPLACE;
 
-PROC EXPORT DATA = wald_normal
+PROC EXPORT DATA = wald_nb
 DBMS = CSV
 OUTFILE = "res/wald_nb_&index..csv"
 REPLACE;
