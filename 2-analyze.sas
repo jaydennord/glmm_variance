@@ -3,7 +3,7 @@
 
 DATA d;
 INFILE "data/data_&index..csv" DELIMITER = "," FIRSTOBS=2;
-INPUT id $ blk trt y;
+INPUT id $10. blk trt y;
 RUN;
 
 PROC SORT DATA = d;
