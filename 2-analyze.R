@@ -12,18 +12,20 @@ library(tidyverse)
 library(rstanarm)
 library(lme4)
 
+rstan_options(auto_write = FALSE)
+
 devtools::session_info()
 
 
 # custom functions --------------------------------------------------------
 
 robust_template <- 'function(formula, data, ...) {
-  
+
   e <- w <- NA_character_
   res <- matrix(NA_real_, 1, 2)
-  
+
   tryCatch(
-    
+
     withCallingHandlers(
       res <- my_conf(<FUN>(formula, data, ...)),
       warning = function(w) {
@@ -31,22 +33,22 @@ robust_template <- 'function(formula, data, ...) {
         invokeRestart("muffleWarning")
       }
     ),
-    
+
     error = function(e) {
       e <<- conditionMessage(e)
     }
-    
+
   )
-  
+
   colnames(res) <- c("c025", "c975")
 
   cbind(
     as_tibble(res),
     warning = w,
-    error = e, 
+    error = e,
     stringsAsFactors = FALSE
   )
-  
+
 }'
 
 funs <- c(
@@ -58,7 +60,7 @@ funs <- c(
 
 for (f in funs) {
   new_f <- str_replace_all(robust_template, "<FUN>", f) %>%
-    str2expression() %>% 
+    str2expression() %>%
     eval()
   assign(paste0("r_", f), new_f)
 }
@@ -78,27 +80,27 @@ ana_data <- function(data, ...) {
   fits <- list(
     bayes_fit_normal = r_stan_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:trt), data = data, family = "poisson", refresh = 0),
     bayes_fit_nb     = r_stan_glmer.nb(y ~ 0 + trt + (1 | blk), data = data, refresh = 0),
-    
+
     freq_fit_normal = r_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:trt), data = data, family = "poisson"),
     freq_fit_nb     = r_glmer.nb(y ~ 0 + trt + (1 | blk), data = data)
-    
+
   )
 
   bind_rows(fits, .id = "ana_method")
-  
+
 }
 
 
 # analyses ----------------------------------------------------------------
 
 dgroup <- fread(
-  file = paste0("data/data_", index, ".csv"), 
-  sep = ",", 
+  file = paste0("data/data_", index, ".csv"),
+  sep = ",",
   data.table = FALSE,
   colClasses = c("character", "factor", "factor", "numeric")
 )
 
-dres <- dgroup %>% 
+dres <- dgroup %>%
   group_by(id) %>%
   nest() %>%
   mutate(
