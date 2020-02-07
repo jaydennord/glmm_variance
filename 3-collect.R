@@ -25,8 +25,9 @@ results <- c("res", "wald_normal", "wald_nb") %>%
     map_dfr(read_csv, col_types = cols())
   ) %>%
   modify_at(
-    vars(starts_with("wald_")), 
-    ~ select(., id, parm = CovParm, c025 = LowerWaldCL, c975 = UpperWaldCL)
+    vars(starts_with("wald_")), select,
+    id, c025 = LowerWaldCL, c975 = UpperWaldCL,
+    sas_msg = Reason, sas_status = Status, sas_g_mat = pdG
   ) %>%
   bind_rows(.id = "source") %>%
   mutate(

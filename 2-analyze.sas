@@ -18,7 +18,9 @@ PROC GLIMMIX DATA = d;
   MODEL y = trt /DIST = POIS;
   RANDOM INT trt /SUBJECT = blk;
   COVTEST /CL(TYPE = WALD);
-  ODS OUTPUT covparms = wald_normal;
+  ODS OUTPUT 
+    covparms = wald_normal
+    convergenceStatus = conv_normal;
 RUN;
 
 PROC GLIMMIX DATA = d;
@@ -27,10 +29,25 @@ PROC GLIMMIX DATA = d;
   MODEL y = trt /DIST = NEGBIN;
   RANDOM INT /SUBJECT = blk;
   COVTEST /CL(TYPE = WALD);
-  ODS OUTPUT covparms = wald_nb;
+  ODS OUTPUT 
+    covparms = wald_nb
+    convergenceStatus = conv_nb;
 RUN;
 
 ODS SELECT ALL;
+
+DATA wald_normal;
+  MERGE 
+    wald_normal (WHERE = (CovParm = 'Intercept'))
+    conv_normal;
+  BY id;
+
+DATA wald_nb;
+  MERGE 
+    wald_nb (WHERE = (CovParm = 'Intercept'))
+    conv_nb;
+  BY id;
+RUN;
 
 PROC EXPORT DATA = wald_normal
 DBMS = CSV
