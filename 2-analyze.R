@@ -78,11 +78,11 @@ my_conf.glmerMod <- function(fit, ...) {
 
 ana_data <- function(data, ...) {
   fits <- list(
-    bayes_fit_normal = r_stan_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:trt), data = data, family = "poisson", refresh = 0),
-    bayes_fit_nb     = r_stan_glmer.nb(y ~ 0 + trt + (1 | blk), data = data, refresh = 0),
+    stan_fit_normal = r_stan_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:trt), data = data, family = "poisson", refresh = 0),
+    stan_fit_nb     = r_stan_glmer.nb(y ~ 0 + trt + (1 | blk), data = data, refresh = 0),
 
-    freq_fit_normal = r_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:trt), data = data, family = "poisson"),
-    freq_fit_nb     = r_glmer.nb(y ~ 0 + trt + (1 | blk), data = data)
+    lme4_fit_normal = r_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:trt), data = data, family = "poisson"),
+    lme4_fit_nb     = r_glmer.nb(y ~ 0 + trt + (1 | blk), data = data)
 
   )
 
