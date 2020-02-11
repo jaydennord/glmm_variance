@@ -12,7 +12,7 @@ library(tidyverse)
 library(rstanarm)
 library(lme4)
 
-rstan_options(auto_write = FALSE)
+rstan::rstan_options(auto_write = FALSE)
 
 devtools::session_info()
 
