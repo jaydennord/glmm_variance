@@ -41,13 +41,13 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
       e <- rnorm(n, sd = eu_sd)
       eta <- log(mu) + b + e
       lambda <- exp(eta)
-      rpois(n, lambda)
+      rpois(n, lambda = lambda)
     },
 
     pois_gamma = {
       eta <- log(mu) + b
       lambda <- exp(eta)
-      rnbinom(n, lambda, phi)
+      rnbinom(n, size = phi, mu = lambda)
     }
 
   )
