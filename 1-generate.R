@@ -77,17 +77,17 @@ dsn_common <- crossing(
   rep = 1:nrep
 )
 
-# dsn_methods <- list(
-#
-#   pois_gamma = crossing(
-#     phi = c(.1, .2)
-#   ),
-#
-#   pois_normal = crossing(
-#     eu_sd = .5
-#   )
-#
-# ) %>% bind_rows(.id = "gen_method")
+dsn_methods <- list(
+
+  pois_gamma = crossing(
+    phi = c(.25, 5)
+  ),
+
+  pois_normal = crossing(
+    eu_sd = c(.5, .9)
+  )
+
+) %>% bind_rows(.id = "gen_method")
 
 
 set.seed(12479)
@@ -98,11 +98,12 @@ set.seed(12479)
 #     sim_block = sample(0:749, size = n(), replace = TRUE)
 #   )
 dsn <- dsn_common %>% crossing(
-  gen_method = c("pois_gamma", "pois_normal")
+  # gen_method = c("pois_gamma", "pois_normal")
+  dsn_methods
 ) %>%
   mutate(
-    eu_sd = sqrt(1 - blk_sd^2),
-    phi = 1 / (exp(eu_sd^2 / 2) + 1),
+    # eu_sd = sqrt(1 - blk_sd^2),
+    # phi = 1 / (exp(eu_sd^2 / 2) + 1),
     id = stri_rand_strings(n(), length = 10),
     sim_block = sample(0:749, size = n(), replace = TRUE)
   )
