@@ -54,8 +54,8 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
 
   return(data.frame(
     id  = id,
-    blk = factor(blk),
-    trt = factor(trt),
+    blk = blk,
+    trt = trt,
     y   = y,
     stringsAsFactors = FALSE
   ))
@@ -64,6 +64,11 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
 }
 
 calc_phi <- function(mu, blk_sd, eu_sd, ...) {
+  
+  mu <- case_when(
+    mu == "m10" ~ 10,
+    mu == "m45" ~ 45
+  )
   
   s2 <- eu_sd^2
   t2 <- blk_sd^2
@@ -85,14 +90,14 @@ calc_phi <- function(mu, blk_sd, eu_sd, ...) {
 # SAS glimmix defaults CIs are possible
 # write-up of some kind
 # can't compare generation conditions
-
-dsn_common <- crossing(
-  nblk = c(4, 20),
-  neu = 6,
-  blk_sd = c(.25, .5, .75),
-  mu = c("m10", "m45"),
-  rep = 1:nrep
-)
+# 
+# dsn_common <- crossing(
+#   nblk = c(4, 20),
+#   neu = 6,
+#   blk_sd = c(.25, .5, .75),
+#   mu = c("m10", "m45"),
+#   rep = 1:nrep
+# )
 
 # dsn_methods <- list(
 # 
@@ -109,7 +114,14 @@ dsn_common <- crossing(
 
 set.seed(12479)
 
-dsn <- crossing(dsn_common, dsn_methods) %>%
+dsn <- crossing(
+  nblk = c(4, 20),
+  neu = 6,
+  blk_sd = c(.25, .5, .75),
+  mu = c("m10", "m45"),
+  rep = 1:nrep,
+  gen_method = c("pois_gamma", "pois_normal")
+) %>%
   mutate(
     id = stri_rand_strings(n(), length = 10),
     sim_block = sample(0:749, size = n(), replace = TRUE),
