@@ -63,6 +63,23 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
 
 }
 
+calc_phi <- function(mu, blk_sd, eu_sd, ...) {
+  
+  s2 <- eu_sd^2
+  t2 <- blk_sd^2
+  
+  elz <- exp(log(mu) + t2/2)
+  vlz <- exp(2*log(10) + 2*t2) - exp(2*log(10) + t2)
+  
+  ely <- exp(log(mu) + (t2 + s2)/2)
+  vly <- exp(2*log(10) + 2*(t2+s2)) - exp(2*log(10) + t2 + s2)
+  
+  phi <- (elz^2 + vlz) / (ely + vly - elz - vlz)
+  
+  return(phi)
+  
+}
+
 # design matrix -----------------------------------------------------------
 
 # SAS glimmix defaults CIs are possible
@@ -72,41 +89,43 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
 dsn_common <- crossing(
   nblk = c(4, 20),
   neu = 6,
-  blk_sd = c(.1, .25, .5),
+  blk_sd = c(.25, .5, .75),
   mu = c("m10", "m45"),
   rep = 1:nrep
 )
 
-dsn_methods <- list(
-
-  pois_gamma = crossing(
-    phi = c(.25, 5)
-  ),
-
-  pois_normal = crossing(
-    eu_sd = c(.5, .9)
-  )
-
-) %>% bind_rows(.id = "gen_method")
+# dsn_methods <- list(
+# 
+#   pois_gamma = crossing(
+#     phi = c(.25, 5)
+#   ),
+# 
+#   pois_normal = crossing(
+#     eu_sd = c(.5, .9)
+#   )
+# 
+# ) %>% bind_rows(.id = "gen_method")
 
 
 set.seed(12479)
 
-# dsn <- crossing(dsn_common, dsn_methods) %>%
+dsn <- crossing(dsn_common, dsn_methods) %>%
+  mutate(
+    id = stri_rand_strings(n(), length = 10),
+    sim_block = sample(0:749, size = n(), replace = TRUE),
+    eu_sd = (1 - blk_sd^2),
+    phi = calc_phi(mu, blk_sd, eu_sd)
+  )
+# dsn <- dsn_common %>% crossing(
+#   # gen_method = c("pois_gamma", "pois_normal")
+#   dsn_methods
+# ) %>%
 #   mutate(
+#     # eu_sd = sqrt(1 - blk_sd^2),
+#     # phi = 1 / (exp(eu_sd^2 / 2) + 1),
 #     id = stri_rand_strings(n(), length = 10),
 #     sim_block = sample(0:749, size = n(), replace = TRUE)
 #   )
-dsn <- dsn_common %>% crossing(
-  # gen_method = c("pois_gamma", "pois_normal")
-  dsn_methods
-) %>%
-  mutate(
-    # eu_sd = sqrt(1 - blk_sd^2),
-    # phi = 1 / (exp(eu_sd^2 / 2) + 1),
-    id = stri_rand_strings(n(), length = 10),
-    sim_block = sample(0:749, size = n(), replace = TRUE)
-  )
 
 
 # generate ----------------------------------------------------------------

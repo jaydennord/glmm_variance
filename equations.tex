@@ -30,26 +30,19 @@ e_{ij} & \sim N\left(0, \sigma^2\right) \\
 \text{E}\left(\lambda\right) & = \exp{\left(\log{\mu}+\left(\tau^2+\sigma^2\right) / 2\right)} \\
 \text{Var}\left(\lambda\right) & = \exp{\left(2 \log{\mu} + 2\tau^2 + 2\sigma^2\right)} - \exp{\left(2\log{\mu} + \tau^2 +\sigma^2 \right)}
 \end{align*}
-%
-%\begin{align*}
-%\text{E}\left(y\right) & = \text{E}\left(\lambda\right) \\
-%& = \exp{\left(\log{\mu}+\left(\tau^2 + \sigma^2\right) / 2\right)} \\
-%& = \mu \exp{\left(\tau^2 / 2\right)} \exp{\left(\sigma^2 / 2\right)}
-%\end{align*}
-%
-%\begin{align*}
-%\text{Var}\left(y\right) & = \text{Var}\left(\text{E}\left(y_{ij} \middle| b_j\right)\right) +
-%  \text{E}\left(\text{Var}\left(y_{ij} \middle| b_j\right)\right) \\
-%& = \text{Var}\left(\lambda\right) +
-%  \text{E}\left(\lambda\right) \\
-%& = \exp{\left(\log{\mu}+\left(\tau^2+\sigma^2\right) / 2\right)} +
-%  \exp{\left(2 \log{\mu} + 2\tau^2+2\sigma^2 \right)} -
-%  \exp{\left(2\log{\mu} + \tau^2+\sigma^2\right)} \\
-%& = \mu \exp\left(\tau^2 / 2\right) \exp\left(\sigma^2 / 2\right) +
-%  \mu^2 \left(\exp\left(2\tau^2 + 2\sigma^2\right) - \exp{\left(\tau^2 + \sigma^2\right)} \right) \\
-%& = \mu^2 \left(\exp\left(2\tau^2 + 2\sigma^2\right) - \exp{\left(\tau^2 + \sigma^2\right)} \right) +
-%  \mu \exp\left(\tau^2 / 2\right) \exp\left(\sigma^2 / 2\right)
-%\end{align*}
+
+\begin{align*}
+\text{E}\left(y\right) & = \text{E}\left(\lambda\right) \\
+& = \exp{\left(\log{\mu}+\left(\tau^2 + \sigma^2\right) / 2\right)} \\
+& = \mu \exp{\left(\tau^2 / 2\right)} \exp{\left(\sigma^2 / 2\right)}
+\end{align*}
+
+\begin{align*}
+\text{Var}\left(y\right) & = \text{E}\left(\text{Var}\left(y_{ij} \middle| b_j\right)\right) +
+  \text{Var}\left(\text{E}\left(y_{ij} \middle| b_j\right)\right) \\
+& = \text{E}\left(\lambda\right) +
+  \text{Var}\left(\lambda\right)
+\end{align*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -78,7 +71,7 @@ u_{ij} & \sim \Gamma\left(\phi, \text{rate}=\phi\right) \\
 \end{align*}
 
 \begin{align*}
-\text{E}\left(y\right) & = \exp{\left(\log{\mu}+\left(\tau^2\right) / 2\right)} \\
+\text{E}\left(y\right) & = \text{E}\left(\lambda\right) \\
 \text{Var}\left(y\right) & = \text{E}\left(\text{Var}\left(y_{ij} \middle| b_j \right)\right) +
                                  \text{Var}\left(\text{E}\left(y_{ij} \middle| b_j \right)\right) \\
                         & = \text{E}\left(\lambda_{ij} + \lambda_{ij}^2 / \phi\right) +
@@ -86,6 +79,27 @@ u_{ij} & \sim \Gamma\left(\phi, \text{rate}=\phi\right) \\
                         & = \text{E}\left(\lambda\right)+\phi^{-1} \text{E}\left(\lambda^2\right) + \text{Var}\left(\lambda\right) \\
                         & = \text{E}\left(\lambda\right)+\phi^{-1}\text{Var}\left(\lambda\right) + \phi^{-1}\text{E}\left(\lambda\right)^2 + \text{Var}\left(\lambda\right) \\
                         & = \text{E}\left(\lambda\right) + \phi^{-1}\text{E}\left(\lambda\right)^2 + \text{Var}\left(\lambda\right)\left(1 + \phi^{-1}\right)
+\end{align*}
+
+
+\section{$\phi$ calculator}
+
+
+
+\begin{align*}
+\text{Var}\left(Z\right) & = \text{Var}\left(Y\right) \\
+\text{E}\left(\lambda_{Z}\right) + \phi^{-1}\text{E}\left(\lambda_{Z}\right)^2 + \text{Var}\left(\lambda_{Z}\right)\left(1 + \phi^{-1}\right) & =
+  \text{E}\left(\lambda_{Y}\right) +
+  \text{Var}\left(\lambda_{Y}\right) \\
+\phi^{-1}\left(\text{E}\left(\lambda_{Z}\right)^2 +  \text{Var}\left(\lambda_{Z}\right)\right) & =
+\text{E}\left(\lambda_{Y}\right) +
+\text{Var}\left(\lambda_{Y}\right) -
+\text{E}\left(\lambda_{Z}\right) -
+\text{Var}\left(\lambda_{Z}\right) \\
+\phi & = \frac{\text{E}\left(\lambda_{Z}\right)^2 +  \text{Var}\left(\lambda_{Z}\right)}{\text{E}\left(\lambda_{Y}\right) +
+\text{Var}\left(\lambda_{Y}\right) -
+\text{E}\left(\lambda_{Z}\right) -
+\text{Var}\left(\lambda_{Z}\right)}
 \end{align*}
 
 \end{document}
