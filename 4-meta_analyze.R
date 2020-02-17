@@ -51,6 +51,10 @@ d2 %>% filter(c975 < 5) %>%
 
 
 
+d2 %>%
+  ggplot(aes(x = ana_method)) +
+    geom_bar() +
+    facet_grid(nblk + blk_sd ~ gen_method + mu)
 
 d2 %>%
   mutate(reject = c025 < blk_sd & blk_sd < c975) %>%
@@ -68,7 +72,7 @@ d2 %>%
 
 d2 %>%
   mutate(width = c975 - c025) %>%
-  filter(c025 > 0 & c975 < 5, width > 0, !str_detect(ana_method, "wald"), nblk != 4) %>%
+  filter(c025 > 0 & c975 < 5, width > 0) %>%
   ggplot(aes(x = width, fill = ana_method)) +
   geom_histogram(alpha = .5, position = "identity") +
   facet_grid(nblk + blk_sd ~ gen_method + mu)
