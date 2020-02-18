@@ -40,7 +40,7 @@ robust_template <- 'function(formula, data, ...) {
 
   )
 
-  colnames(res) <- c("c025", "c975")
+  colnames(res) <- c("estimate", "c025", "c975")
 
   cbind(
     as_tibble(res),
@@ -68,11 +68,11 @@ for (f in funs) {
 my_conf <- function(...) UseMethod("my_conf")
 
 my_conf.stanreg <- function(fit, ...) {
-  sqrt(posterior_interval(fit, pars = "Sigma[blk:(Intercept),(Intercept)]", prob = .95))
+  sqrt(c(estimate = c(VarCorr(fit)$blk), posterior_interval(fit, pars = "Sigma[blk:(Intercept),(Intercept)]", prob = .95)))
 }
 
 my_conf.glmerMod <- function(fit, ...) {
-  confint(fit, parm = "sd_(Intercept)|blk", method = "profile", quiet = TRUE, oldNames = FALSE)
+  cbind(estimate = c(VarCorr(fit)$blk), confint(fit, parm = "sd_(Intercept)|blk", method = "profile", quiet = TRUE, oldNames = FALSE))
 }
 
 

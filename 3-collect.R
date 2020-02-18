@@ -26,7 +26,7 @@ results <- c("res", "wald_normal", "wald_nb") %>%
   ) %>%
   modify_at(
     vars(starts_with("wald_")), select,
-    id, c025 = LowerWaldCL, c975 = UpperWaldCL,
+    id, estimate = Estimate, c025 = LowerWaldCL, c975 = UpperWaldCL,
     sas_msg = Reason, sas_status = Status, sas_g_mat = pdG
   ) %>%
   bind_rows(.id = "source") %>%
