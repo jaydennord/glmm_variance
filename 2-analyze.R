@@ -22,12 +22,13 @@ devtools::session_info()
 robust_template <- 'function(formula, data, ...) {
 
   e <- w <- NA_character_
-  res <- matrix(NA_real_, 1, 2)
+  col_names <- c("estimate", "c025", "c975")
+  res <- matrix(NA_real_, 1, 3, dimnames = list(NULL, col_names))
 
   tryCatch(
 
     withCallingHandlers(
-      res <- my_conf(<FUN>(formula, data, ...)),
+      res[] <- my_conf(<FUN>(formula, data, ...)),
       warning = function(w) {
         w <<- conditionMessage(w)
         invokeRestart("muffleWarning")
@@ -39,8 +40,6 @@ robust_template <- 'function(formula, data, ...) {
     }
 
   )
-
-  colnames(res) <- c("estimate", "c025", "c975")
 
   cbind(
     as_tibble(res),
