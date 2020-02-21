@@ -47,7 +47,7 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
     pois_gamma = {
       eta <- log(mu) + b
       lambda <- exp(eta)
-      rnbinom(n, size = phi, mu = lambda)
+      rnbinom(n, size = 1/phi, mu = lambda)
     }
 
   )
@@ -79,7 +79,7 @@ calc_phi <- function(mu, blk_sd, eu_sd, ...) {
   ely <- exp(log(mu) + (t2 + s2)/2)
   vly <- exp(2*log(10) + 2*(t2+s2)) - exp(2*log(10) + t2 + s2)
   
-  phi <- (elz^2 + vlz) / (ely + vly - elz - vlz)
+  phi <- (ely + vly - elz - vlz) / (elz^2 + vlz)
   
   return(phi)
   
