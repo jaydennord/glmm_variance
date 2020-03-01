@@ -67,7 +67,7 @@ my_conf <- function(...) UseMethod("my_conf")
 my_conf.stanreg <- function(fit, ...) {
   summary(fit, prob = c(.025, .975), regex_pars = "^(Sigma|trt)") %>% 
     as_tibble(rownames = "term") %>%
-    mutate_at(vars(mean, `2.5%`, `97.5%`), exp) %>%
+    mutate_at(vars(mean, `2.5%`, `97.5%`), ~ ifelse(grepl("^trt\\d", term), exp(.), .)) %>%
     rename(
       estimate  = mean,
       conf.low  = `2.5%`,
