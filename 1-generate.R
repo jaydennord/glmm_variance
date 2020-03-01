@@ -16,7 +16,7 @@ devtools::session_info()
 
 # functions ---------------------------------------------------------------
 
-gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
+gen_data <- function(id, nblk, neu, blk_sd, gen_method, phi, eu_sd, mu, ...) {
 
   mu <- switch(
     EXPR = mu,
@@ -24,12 +24,12 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
     m45 = rep(45, 6)
   )
 
-  neu <- length(mu)
   n <- nblk * neu
 
   blk <- rep(seq_len(nblk), each = neu)
-  trt  <- rep_len(seq_len(neu), n)
-  mu <- mu[trt]
+  eu  <- rep_len(seq_len(neu), n)
+  trt <- rep_len(seq_len(6), n)
+  mu  <- mu[trt]
 
   b <- rnorm(n = nblk, sd = blk_sd)[blk]
 
@@ -55,6 +55,7 @@ gen_data <- function(id, nblk, blk_sd, gen_method, phi, eu_sd, mu, ...) {
   return(data.frame(
     id  = id,
     blk = blk,
+    eu  = eu,
     trt = trt,
     y   = y,
     stringsAsFactors = FALSE
@@ -115,8 +116,8 @@ calc_phi <- function(mu, blk_sd, eu_sd, ...) {
 set.seed(12479)
 
 dsn <- crossing(
-  nblk = c(4, 20),
-  neu = 6,
+  nblk = c(4, 10, 20, 30),
+  neu = 1:3 * 6,
   blk_sd = c(.25, .5, .75),
   mu = c("m10", "m45"),
   rep = 1:nrep,

@@ -7,10 +7,10 @@ index <- commandArgs(trailingOnly=TRUE)
 
 checkpoint::checkpoint("2019-11-01", scanForPackages = FALSE, checkpointLocation = ".")
 
-library(data.table)
 library(tidyverse)
 library(rstanarm)
 library(lme4)
+library(broom.mixed)
 
 rstan::rstan_options(auto_write = FALSE)
 
@@ -22,13 +22,11 @@ devtools::session_info()
 robust_template <- 'function(formula, data, ...) {
 
   e <- w <- NA_character_
-  col_names <- c("estimate", "c025", "c975")
-  res <- matrix(NA_real_, 1, 3, dimnames = list(NULL, col_names))
-
+  
   tryCatch(
 
     withCallingHandlers(
-      res[] <- my_conf(<FUN>(formula, data, ...)),
+      res <- my_conf(<FUN>(formula, data, ...)),
       warning = function(w) {
         w <<- conditionMessage(w)
         invokeRestart("muffleWarning")
@@ -42,7 +40,7 @@ robust_template <- 'function(formula, data, ...) {
   )
 
   cbind(
-    as_tibble(res),
+    res,
     warning = w,
     error = e,
     stringsAsFactors = FALSE
@@ -67,20 +65,27 @@ for (f in funs) {
 my_conf <- function(...) UseMethod("my_conf")
 
 my_conf.stanreg <- function(fit, ...) {
-  sqrt(c(estimate = c(VarCorr(fit)$blk), posterior_interval(fit, pars = "Sigma[blk:(Intercept),(Intercept)]", prob = .95)))
+  summary(fit, prob = c(.025, .975), regex_pars = "^(Sigma|trt)") %>% 
+    as_tibble(rownames = "term") %>%
+    mutate_at(vars(mean, `2.5%`, `97.5%`), exp) %>%
+    rename(
+      estimate  = mean,
+      conf.low  = `2.5%`,
+      conf.high = `97.5%`
+    )
 }
 
 my_conf.glmerMod <- function(fit, ...) {
-  cbind(estimate = c(VarCorr(fit)$blk), confint(fit, parm = "sd_(Intercept)|blk", method = "profile", quiet = TRUE, oldNames = FALSE))
+  tidy(fit, exponentiate = T, conf.int = T, conf.method = "profile")
 }
 
 
 ana_data <- function(data, ...) {
   fits <- list(
-    stan_fit_normal = r_stan_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:trt), data = data, family = "poisson", refresh = 0, adapt_delta = .99, seed = 12479),
+    stan_fit_normal = r_stan_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:eu), data = data, family = "poisson", refresh = 0, adapt_delta = .99, seed = 12479),
     stan_fit_nb     = r_stan_glmer.nb(y ~ 0 + trt + (1 | blk), data = data, refresh = 0, adapt_delta = .99, seed = 12479),
 
-    lme4_fit_normal = r_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:trt), data = data, family = "poisson"),
+    lme4_fit_normal = r_glmer   (y ~ 0 + trt + (1 | blk) + (1 | blk:eu), data = data, family = "poisson"),
     lme4_fit_nb     = r_glmer.nb(y ~ 0 + trt + (1 | blk), data = data)
 
   )
@@ -92,11 +97,9 @@ ana_data <- function(data, ...) {
 
 # analyses ----------------------------------------------------------------
 
-dgroup <- fread(
-  file = paste0("data/data_", index, ".csv"),
-  sep = ",",
-  data.table = FALSE,
-  colClasses = c("character", "factor", "factor", "numeric")
+dgroup <- read_csv(
+  file = paste0("data/data_", index, ".csv"), 
+  col_types = "cfffn"
 )
 
 dres <- dgroup %>%
@@ -108,5 +111,4 @@ dres <- dgroup %>%
   ) %>%
   unnest(res)
 
-
-fwrite(dres, paste0("res/res_", index, ".csv"), sep = ",")
+write_csv(dres, paste0("res/res_", index, ".csv"))
