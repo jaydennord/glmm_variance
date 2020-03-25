@@ -23,6 +23,8 @@ robust_template <- 'function(formula, data, ...) {
 
   e <- w <- NA_character_
   
+  res <- tibble(estimate = NA_real_)
+  
   tryCatch(
 
     withCallingHandlers(
