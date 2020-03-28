@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --array=0-749
-#SBATCH --time=1-12:00:00
+#SBATCH --time=3-00:00:00
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=16384
 #SBATCH --job-name=ana
